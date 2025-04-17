@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "118851695903",
+    "project_id": "kontak-application",
+    "storage_bucket": "kontak-application.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:118851695903:android:e8ba4ddb6cd07ca4bc6c2a",
+        "android_client_info": {
+          "package_name": "com.android.kontakapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAIMxl3v1IhxyhcTRka6z6y0yf08TMoSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:118851695903:android:52e383ede4fb3b97bc6c2a",
+        "android_client_info": {
+          "package_name": "com.mavens.kontakapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAIMxl3v1IhxyhcTRka6z6y0yf08TMoSA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

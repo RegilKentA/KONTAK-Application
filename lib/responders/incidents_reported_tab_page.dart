@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,8 @@ import 'package:kontak_application_2/responders/incidents_reported_detail_page.d
 import 'package:kontak_application_2/responders/responders_database.dart';
 import 'package:kontak_application_2/services/notification_service.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:permission_handler/permission_handler.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:path/path.dart' as p;
 
 class IncidentsReportsTab extends StatefulWidget {
   @override
@@ -20,7 +20,6 @@ class _IncidentsReportsTabState extends State<IncidentsReportsTab> {
   final RespondentDatabase _firestoreService = RespondentDatabase();
 
   DateTimeRange? selectedDateRange;
-  bool _isStoragePermissionGranted = false;
 
   Future<QuerySnapshot> _getIncidentData() async {
     Query query = FirebaseFirestore.instance
@@ -38,151 +37,114 @@ class _IncidentsReportsTabState extends State<IncidentsReportsTab> {
   }
 
   Future<void> _exportData() async {
-    // Check permissions
-    await _checkPermissions();
-    if (_isStoragePermissionGranted) {
-      if (selectedDateRange == null) {
-        // If no date range is selected, show a message and return
+    if (selectedDateRange == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please select a date range first')),
+      );
+      return;
+    }
+
+    try {
+      // Fetch incident data
+      QuerySnapshot incidentSnapshot = await _getIncidentData();
+
+      List<List<dynamic>> incidentData = [];
+      for (var doc in incidentSnapshot.docs) {
+        DateTime dateTime = (doc['date_time'] as Timestamp).toDate();
+        if (!dateTime.isBefore(selectedDateRange!.start) &&
+            !dateTime.isAfter(selectedDateRange!.end)) {
+          String status = doc['status'];
+          String formattedDateTime =
+              '${dateTime.year}-${dateTime.month}-${dateTime.day},\n${dateTime.hour}:${dateTime.minute}:${dateTime.second}';
+          String name = doc['user_name'];
+          String stationCalled = doc['station_id'];
+          double latitude = doc['latitude'];
+          double longitude = doc['longitude'];
+          String incidentLocation = "$latitude,\n$longitude";
+          String number = doc['user_contact'];
+          incidentData.add([
+            formattedDateTime,
+            name,
+            stationCalled,
+            status,
+            incidentLocation,
+            number
+          ]);
+        }
+      }
+
+      // Create PDF
+      final pdf = pw.Document();
+      pdf.addPage(pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.SizedBox(height: 10),
+              pw.Text('Reported Incident Data',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 10),
+              pw.Table.fromTextArray(
+                headers: [
+                  'Date &\nTime',
+                  'Name',
+                  'Station Called',
+                  'Status',
+                  'Incident\nLocation',
+                  'Number'
+                ],
+                data: incidentData,
+                headerStyle: pw.TextStyle(
+                  fontSize: 11,
+                  fontWeight: pw.FontWeight.bold,
+                ),
+                cellStyle: pw.TextStyle(fontSize: 10),
+              ),
+            ],
+          );
+        },
+      ));
+
+      // Ask user for directory using SAF
+      String? selectedDirectory = await FilePicker.platform.getDirectoryPath(
+        dialogTitle: 'Choose folder to save PDF',
+      );
+
+      if (selectedDirectory == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please select a date range first')),
+          SnackBar(content: Text('Export canceled by user.')),
         );
         return;
       }
 
-      try {
-        QuerySnapshot incidentSnapshot = await _getIncidentData();
+      // Build full path and save file
+      String fullPath = p.join(selectedDirectory, 'reported_incident_data.pdf');
+      File file = File(fullPath);
 
-        List<List<dynamic>> incidentData = [];
-        for (var doc in incidentSnapshot.docs) {
-          DateTime dateTime = (doc['date_time'] as Timestamp).toDate();
-          if (dateTime.isAfter(selectedDateRange!.start) &&
-              dateTime.isBefore(selectedDateRange!.end)) {
-            String status = doc['status'];
-            String formattedDateTime =
-                '${dateTime.year}-${dateTime.month}-${dateTime.day},\n${dateTime.hour}:${dateTime.minute}:${dateTime.second}';
-            String name = doc['user_name'];
-            String stationCalled = doc['station_id'];
-            double latitude = doc['latitude'];
-            double longitude = doc['longitude'];
-            String incidentLocation = "$latitude,\n$longitude";
-            String number = doc['user_contact'];
-            incidentData.add([
-              formattedDateTime,
-              name,
-              stationCalled,
-              status,
-              incidentLocation,
-              number
-            ]);
-          }
-        }
-
-        final pdf = pw.Document();
-
-        // Add Incident Data to PDF
-        pdf.addPage(pw.Page(
-          build: (pw.Context context) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                pw.SizedBox(height: 10),
-                pw.Text('Reported Incident Data',
-                    style: pw.TextStyle(
-                        fontSize: 18, fontWeight: pw.FontWeight.bold)),
-                pw.SizedBox(height: 10),
-                pw.Table.fromTextArray(
-                  headers: [
-                    'Date &\nTime',
-                    'Name',
-                    'Station Called',
-                    'Status',
-                    'Incident\nLocation',
-                    'Number'
-                  ],
-                  data: incidentData,
-                  headerStyle: pw.TextStyle(
-                    fontSize: 11, // Set the font size for the table header
-                    fontWeight: pw.FontWeight.bold,
-                  ),
-                  cellStyle: pw.TextStyle(
-                    fontSize: 10, // Set the font size for table cells
-                  ),
-                ),
-              ],
-            );
-          },
-        ));
-
-        try {
-          if (Platform.isAndroid) {
-            // final directory = await getExternalStorageDirectory();
-            final downloadsDirectory =
-                Directory('/storage/emulated/0/Download');
-
-            String filePath =
-                '${downloadsDirectory.path}/reported_incident_data.pdf';
-            File file = File(filePath);
-
-            await NotificationService.showNotification(
-                title: "Exporting Data", body: "Starting file export...");
-
-            await file.writeAsBytes(await pdf.save());
-
-            await NotificationService.showNotification(
-                title: "Export Complete", body: "File exported to $filePath");
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Only available for Android')),
-            );
-          }
-        } catch (e) {
-          await NotificationService.showNotification(
-              title: "Export Failed", body: "Error during export: $e");
-        }
-      } catch (e) {
-        print('Error during export: $e');
-        await NotificationService.showNotification(
-            title: "Export Failed", body: "Failed to export data: $e");
-      }
-    }
-  }
-
-  Future<void> _checkPermissions() async {
-    PermissionStatus status = await Permission.manageExternalStorage.status;
-
-    if (status.isGranted) {
-      // If the permission is granted
-      setState(() {
-        _isStoragePermissionGranted = true;
-      });
-    } else if (status.isDenied) {
-      // If the permission is denied, request it
-      PermissionStatus newStatus =
-          await Permission.manageExternalStorage.request();
-
-      setState(() {
-        _isStoragePermissionGranted = newStatus.isGranted;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-            content:
-                Text('Permission denied. Please allow access to your files.')),
+      await NotificationService.showNotification(
+        title: "Exporting Data",
+        body: "Saving file...",
       );
-    } else if (status.isPermanentlyDenied) {
-      // If the permission is permanently denied, guide the user to settings
-      setState(() {
-        _isStoragePermissionGranted = false;
-      });
+
+      await file.writeAsBytes(await pdf.save());
+
+      await NotificationService.showNotification(
+        title: "Export Complete",
+        body: "File saved to:\n$fullPath",
+      );
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Please enable storage permission in the app files.'),
-          action: SnackBarAction(
-              label: 'Open Settings',
-              onPressed: () async {
-                openAppSettings();
-              }),
-        ),
+        SnackBar(content: Text('File saved to: $fullPath')),
+      );
+    } catch (e) {
+      print('Export error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to export data: $e')),
+      );
+      await NotificationService.showNotification(
+        title: "Export Failed",
+        body: "Error: $e",
       );
     }
   }

@@ -1,8 +1,8 @@
-# kontak_application_2
+# KONTAK Application
 
-A new Flutter project.
+An Android application for immediate access to essential emergency services and real-time information during critical situations.
 
-## Getting Started
+## Features
 
 This project is a starting point for a Flutter application.
 

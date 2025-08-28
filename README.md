@@ -2,6 +2,11 @@
 
 An Android application for immediate access to essential emergency services and real-time information during critical situations.
 
+### Built With
+
+[![Flutter][Flutter.dev]][Flutter-url][![React][React.js]][React-url][![Vue][Vue.js]][Vue-url][![Angular][Angular.io]][Angular-url]
+[![Svelte][Svelte.dev]][Svelte-url][![Laravel][Laravel.com]][Laravel-url][![Bootstrap][Bootstrap.com]][Bootstrap-url][![JQuery][JQuery.com]][JQuery-url]
+
 ## Features
 
 This project is a starting point for a Flutter application.

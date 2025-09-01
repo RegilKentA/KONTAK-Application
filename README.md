@@ -26,23 +26,24 @@ KONTAK is an Android emergency and hotline assistance application developed for 
 
 ## 🖼️ Demo of Application
 
-![Services Tab](images/servicesTab.png)
-![Detailed Page of Emergency Station](images/detailedPage.png)
-![KONTAK Locator](images/kontakLocator.png)
-![Care Tips](images/careTips.png)
-![News Tab](images/newsTab.png)
-![User Profile](images/userProfile.png)
+![Services Tab](assets/images/servicesTab.jpg)
+![Detailed Page of Emergency Station](assets/images/detailedPage.jpg)
+![KONTAK Locator](assets/images/kontakLocator.jpg)
+![Care Tips](assets/images/careTips.jpg)
+![Detailed Page of Care Tips](assets/images/caretipsDetailedPage.jpg)
+![News Tab](assets/images/newsTab.jpg)
+![User Profile](assets/images/userProfile.jpg)
 
 ## 🖼️ Video Demo of Application
 ### Preview  
-![App Demo](images/appDemo.gif)  
+![App Demo](assets/images/appDemo.gif)  
 
-### Full Video  
-[![Watch the video](https://img.youtube.com/vi/your-video-id/0.jpg)](https://www.youtube.com/watch?v=your-video-id)
+### 📺 Full Video  
+[![Watch the video](https://img.youtube.com/vi/asvOPR9XZR8/0.jpg)](https://www.youtube.com/watch?v=asvOPR9XZR8)
 
 ## 📲 Installation & Setup of APK App
 1. Download Apk app:
-    [Download KONTAK APK](https://example.com/kontak-app.apk)
+    [Download KONTAK APK](https://drive.google.com/file/d/1k-zylkDOM-eJUoKXnMA2LNGNlb8WENqD/view?usp=sharing)
 2. Install the App.
 
 ## 📌 Usage
@@ -50,6 +51,9 @@ KONTAK is an Android emergency and hotline assistance application developed for 
 - Choose an emergency category (Police, Fire, Medical, etc.).
 - Tap the **Call button** to instantly connect with the nearest station.
 - Browse **first aid tips** for self-help while waiting for responders.
+
+## 📖 Manual
+For detailed instructions on how to use the application, please refer to the [User Manual](assets/KONTAKUserManual.pdf).
 
 ## 👥 Contributors
 - [Regil Kent C. Antonio] – Developer

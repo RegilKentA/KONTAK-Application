@@ -26,13 +26,15 @@ KONTAK is an Android emergency and hotline assistance application developed for 
 
 ## 🖼️ Demo of Application
 
-![Services Tab](assets/images/servicesTab.jpg)
-![Detailed Page of Emergency Station](assets/images/detailedPage.jpg)
-![KONTAK Locator](assets/images/kontakLocator.jpg)
-![Care Tips](assets/images/careTips.jpg)
-![Detailed Page of Care Tips](assets/images/caretipsDetailedPage.jpg)
-![News Tab](assets/images/newsTab.jpg)
-![User Profile](assets/images/userProfile.jpg)
+<p align="center">
+  <img src="assets/images/servicesTab.jpg" alt="Services Tab" width="250"/>
+  <img src="assets/images/detailedPage.jpg" alt="Detailed Page of Emergency Station" width="250"/>
+  <img src="assets/images/kontakLocator.jpg" alt="KONTAK Locator" width="250"/>
+  <img src="assets/images/careTips.jpg" alt="Care Tips" width="250"/>
+  <img src="assets/images/caretipsDetailedPage.jpg" alt="Detailed Page of Care Tips" width="250"/>
+  <img src="assets/images/newsTab.jpg" alt="News Tab" width="250"/>
+  <img src="assets/images/userProfile.jpg" alt="User Profile" width="250"/>
+</p>
 
 ## 🖼️ Video Demo of Application
 ### Preview  
